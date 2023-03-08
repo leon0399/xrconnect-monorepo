@@ -2,5 +2,6 @@
 resolver = "2"
 members = [
   "apps/cli",
+  "apps/tauri-app/src-tauri",
   "xrconnect-rust",
 ]
