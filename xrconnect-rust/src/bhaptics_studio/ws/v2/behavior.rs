@@ -9,6 +9,7 @@ use crate::bhaptics_studio::{
 };
 
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
+use serde_json::Value::Null;
 use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
@@ -46,10 +47,20 @@ async fn ws_handler(ws: warp::ws::Ws, app_info: BHapticsAppInfo) -> Result<impl 
 
             while let Some(result) = rx.next().await {
                 let msg = result.unwrap();
-                println!("JSON message: {:?}", msg);
 
-                let client_msg: BHapticsWebsocketV2ClientMessage = serde_json::from_slice(&msg.as_bytes()).unwrap();
-                println!("Decoded message: {:?}", client_msg);
+                if msg.is_close() {
+                    println!("Client disconnected from /v2/feedbacks: {:?}", app_info);
+                    break;
+                }
+
+                let decoded: Option<BHapticsWebsocketV2ClientMessage> = serde_json::from_slice(&msg.as_bytes()).unwrap_or(None);
+
+                match decoded {
+                    Some(message) => {
+                        println!("Client sent message to /v2/feedbacks: {:?}", message);
+                    },
+                    _ => println!("Invalid message from the client: {:?}", msg),
+                }
             }
         });
     }))
