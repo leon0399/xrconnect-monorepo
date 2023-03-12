@@ -1,14 +1,6 @@
-pub fn add(left: usize, right: usize) -> usize {
-  left + right
-}
+#![crate_type = "lib"]
+#![crate_name = "xrconnect"]
 
-#[cfg(test)]
-mod tests {
-  use super::*;
+pub mod haptics;
 
-  #[test]
-  fn it_works() {
-    let result = add(2, 2);
-    assert_eq!(result, 4);
-  }
-}
+pub mod bhaptics_studio;
