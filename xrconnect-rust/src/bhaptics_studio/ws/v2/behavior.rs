@@ -3,9 +3,7 @@ use crate::bhaptics_studio::{
         BHapticsStudioServer,
         BHapticsAppInfo,
     },
-    ws::v2::model::{
-        BHapticsWebsocketV2ClientMessage,
-    },
+    tact::PlayerRequest,
 };
 
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
@@ -53,15 +51,17 @@ async fn ws_handler(ws: warp::ws::Ws, app_info: BHapticsAppInfo) -> Result<impl 
                     break;
                 }
 
-                let decoded: Option<BHapticsWebsocketV2ClientMessage> = serde_json::from_slice(&msg.as_bytes()).unwrap_or(None);
+                let decoded: Option<PlayerRequest> = serde_json::from_slice(&msg.as_bytes()).unwrap_or(None);
 
                 match decoded {
-                    Some(message) => {
-                        println!("Client sent message to /v2/feedbacks: {:?}", message);
-                    },
+                    Some(message) => handle_haptic_request(message.clone(), app_info.clone()).await,
                     _ => println!("Invalid message from the client: {:?}", msg),
                 }
             }
         });
     }))
+}
+
+async fn handle_haptic_request(message: PlayerRequest, app_info: BHapticsAppInfo) {
+    println!("Client sent message to /v2/feedbacks: {:?}", message);
 }

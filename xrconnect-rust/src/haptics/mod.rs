@@ -1,3 +1,2 @@
-pub struct Haptics {
-
-}
+pub mod model;
+pub mod player;
