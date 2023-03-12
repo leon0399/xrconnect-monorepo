@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 xrconnect = { path = "../../xrconnect-rust" }
 tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
